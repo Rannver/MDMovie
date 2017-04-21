@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv_hotItem"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/moive_test"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_hotItem"
+        android:layout_marginLeft="16dp"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_hotItem"
+            android:textSize="16sp"
+            android:textColor="@color/primary_text_color"
+            android:text="速度与激情8"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rate_hotItem"
+            android:textSize="13sp"
+            android:textColor="@color/second_text_color"
+            android:text="评分："
+            android:layout_marginTop="4dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/directions_hotItem"
+            android:textSize="13sp"
+            android:textColor="@color/second_text_color"
+            android:text="导演："
+            android:layout_marginTop="4dp"
+            />
+
+        <TextView
+            android:id="@+id/casts_hotItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="演员："
+            android:textColor="@color/second_text_color"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/look_hotItem"
+            android:textSize="13sp"
+            android:textColor="@color/md_orange_600"
+            android:text="XXX人看过"
+            android:layout_marginTop="4dp"
+            />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

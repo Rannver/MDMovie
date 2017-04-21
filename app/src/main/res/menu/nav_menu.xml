@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_hot"
+            android:icon="@drawable/ic_hot"
+            android:title="正在热映"
+            ></item>
+        <item
+            android:id="@+id/nav_future"
+            android:icon="@drawable/ic_future"
+            android:title="即将上映"
+            ></item>
+        <item
+            android:id="@+id/nav_top"
+            android:icon="@drawable/ic_top"
+            android:title="TOP10"
+            ></item>
+        <item
+            android:id="@+id/nav_influent"
+            android:icon="@drawable/ic_influent"
+            android:title="口碑榜"
+            ></item>
+        <item
+            android:id="@+id/nav_ticket"
+            android:icon="@drawable/ic_ticket"
+            android:title="北美票房榜"
+            ></item>
+        <item
+            android:id="@+id/nav_new"
+            android:icon="@drawable/ic_new"
+            android:title="新片榜"
+            ></item>
+    </group>
+
+</menu>
