@@ -5,10 +5,14 @@ import android.util.Log;
 
 import com.example.rannver.mdmovie.bean.gsonBean.HotGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.HotListBean;
+import com.example.rannver.mdmovie.contract.HotContract;
+import com.example.rannver.mdmovie.presenter.HotPresenter;
 import com.example.rannver.mdmovie.webApi.HotWebApi;
 import com.example.rannver.mdmovie.webServce.HotWebServce;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.StreamHandler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,29 +26,28 @@ public class HotModel {
 
     private HotGsonBean hotGsonBean;
     private String TAG = "HotModel";
-    private Handler handler = new Handler();
+    private List<HotListBean> hotlist;
+    private HotContract.HotPresenter hotPresenter;
 
-    public HotModel(){
+
+    public HotModel(HotContract.HotPresenter hotPresenter){
+        this.hotPresenter = hotPresenter;
         GetHotInfo();
     }
 
     //获取全部信息
     private void GetHotInfo(){
+        Log.d(TAG,"GetHotInfo");
         HotWebApi hotWebApi = new HotWebApi();
         HotWebServce webServce = hotWebApi.getServce();
         Call<HotGsonBean> call = webServce.getState("武汉");
         call.enqueue(new Callback<HotGsonBean>() {
             @Override
             public void onResponse(Call<HotGsonBean> call, final Response<HotGsonBean> response) {
-                handler.post(new Thread(){
-                    @Override
-                    public void run() {
-                        hotGsonBean = response.body();
-                        super.run();
-                    }
-                });
                 hotGsonBean = response.body();
-                System.out.println(TAG+":"+response.body().getCount());
+                hotlist = GetHotData();
+                hotPresenter.ModleOK();
+                System.out.println(TAG+":"+response.body().getTitle());
             }
 
             @Override
@@ -54,14 +57,23 @@ public class HotModel {
         });
     }
 
+    private void LogTAG(){
+        if (hotlist==null){
+            Log.d(TAG,"hotlist is null");
+        }
+        if (hotGsonBean==null){
+            Log.d(TAG,"hotbean is null");
+        }
+    }
+
     //获取最热列表信息
-    public List<HotListBean> GetHotList(){
-        List<HotListBean> list = null;
+    private List<HotListBean> GetHotData(){
+        List<HotListBean> list = new ArrayList<HotListBean>();
         List<HotGsonBean.SubjectsBean> subjects = hotGsonBean.getSubjects();
         for (HotGsonBean.SubjectsBean subject: subjects) {
             HotListBean hot = new HotListBean();
-            List<String> directions = null;
-            List<String> casts = null;
+            List<String> directions = new ArrayList<String>();
+            List<String> casts = new ArrayList<String>();
 
             for (HotGsonBean.SubjectsBean.DirectorsBean directior:subject.getDirectors()) {
                 directions.add(directior.getName());
@@ -79,6 +91,12 @@ public class HotModel {
             list.add(hot);
         }
         return list;
+    }
+
+    //返回hotList
+    public List<HotListBean> GetHotList(){
+        LogTAG();
+        return hotlist;
     }
 
 }

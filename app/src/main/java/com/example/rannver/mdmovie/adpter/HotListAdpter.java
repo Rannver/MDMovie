@@ -48,6 +48,7 @@ public class HotListAdpter extends RecyclerView.Adapter<HotListAdpter.ViewHolder
 
         holder.tv_title.setText(hotlist.get(position).getTitle());
         holder.tv_rate.setText("评分："+hotlist.get(position).getRate());
+        holder.tv_count.setText(hotlist.get(position).getCollect_count()+"人看过");
 
         String directions = "";
         String casts = "";

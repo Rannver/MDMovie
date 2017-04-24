@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.rannver.mdmovie.presenter.HotPresenter;
 import com.example.rannver.mdmovie.view.fragment.FutureFragment;
 import com.example.rannver.mdmovie.view.fragment.HotFragment;
 import com.example.rannver.mdmovie.view.fragment.InfluentFragment;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity{
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.framLayout_main, hotFragment);
         transaction.commit();
+        hotFragment.setPresenter(new HotPresenter());
 
     }
 
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity{
                 if (hotFragment==null){
                     hotFragment = new HotFragment();
                     transaction.add(R.id.framLayout_main,hotFragment);
+                    hotFragment.setPresenter(new HotPresenter());
                     System.out.println("Fragment:new Hot Fragment");
                 }else {
                     transaction.show(hotFragment);

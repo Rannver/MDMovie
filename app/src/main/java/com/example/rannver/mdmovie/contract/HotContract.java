@@ -21,7 +21,9 @@ public interface HotContract {
     }
 
     interface HotPresenter extends BasePresenter{
+        void initView(HotView hotView);
 
+        void  ModleOK();
     }
 
     interface HotDetailView extends BaseView<HotDetailPresenter>{
