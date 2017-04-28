@@ -1,19 +1,20 @@
 package com.example.rannver.mdmovie.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.example.rannver.mdmovie.MainActivity;
 import com.example.rannver.mdmovie.R;
-import com.example.rannver.mdmovie.adpter.HotListAdpter;
-import com.example.rannver.mdmovie.bean.listBean.HotListBean;
+import com.example.rannver.mdmovie.adpter.MoiveListAdpter;
+import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
 import com.example.rannver.mdmovie.contract.HotContract;
+import com.example.rannver.mdmovie.view.activity.MoiveDetailActivity;
 
 import java.util.List;
 
@@ -21,7 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Thread.sleep;
 
 /**
  * Created by Rannver on 2017/4/20.
@@ -29,14 +29,17 @@ import static java.lang.Thread.sleep;
 
 public class HotFragment extends BaseFragment implements HotContract.HotView {
 
-    @BindView(R.id.hotList)
-    RecyclerView hotList;
+
+    @BindView(R.id.moiveList)
+    RecyclerView moiveList;
+    @BindView(R.id.moiveText)
+    TextView moiveText;
 
     private String TAG = "HotFragment";
 
     private View view;
     private HotContract.HotPresenter hotPresenter;
-    private List<HotListBean> list;
+    private List<MoiveListBean> list;
 
     @Nullable
     @Override
@@ -45,12 +48,6 @@ public class HotFragment extends BaseFragment implements HotContract.HotView {
         ButterKnife.bind(this, view);
         System.out.println("Fragment:this is hot");
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         return view;
     }
 
@@ -58,25 +55,35 @@ public class HotFragment extends BaseFragment implements HotContract.HotView {
     public void setPresenter(HotContract.HotPresenter presenter) {
         hotPresenter = checkNotNull(presenter);
         hotPresenter.initView(HotFragment.this);
-        hotPresenter.start();
     }
 
     @Override
     public void initList() {
+        moiveText.setVisibility(View.GONE);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        hotList.setLayoutManager(linearLayoutManager);
-        HotListAdpter adpter = new HotListAdpter(list,getContext());
-        hotList.setAdapter(adpter);
+        moiveList.setLayoutManager(linearLayoutManager);
+        MoiveListAdpter adpter = new MoiveListAdpter(list, getContext(),MoiveListAdpter.VIEW_HOT);
+        moiveList.setAdapter(adpter);
+
+        adpter.SetOnItemClickListener(new MoiveListAdpter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(View view, int position, String id) {
+                Intent intent = new Intent(getActivity(), MoiveDetailActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
-    public void SetHotList(List<HotListBean> list) {
+    public void SetHotList(List<MoiveListBean> list) {
         this.list = list;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        hotPresenter.start();
+    public void initText() {
+        moiveList.setVisibility(View.GONE);
+        moiveText.setText("无法连接到服务器，请重试_(:зゝ∠)_");
     }
+
 }

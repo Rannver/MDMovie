@@ -7,7 +7,7 @@ import java.util.List;
  * 正在热映列表类
  */
 
-public class HotListBean {
+public class MoiveListBean {
 
     private String title;
     private double rate;
@@ -15,6 +15,8 @@ public class HotListBean {
     private List<String> casts;
     private int collect_count;
     private String url;
+    private String id;
+    private List<String> genres;
 
     public String getTitle() {
         return title;
@@ -62,5 +64,21 @@ public class HotListBean {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 }

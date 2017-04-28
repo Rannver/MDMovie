@@ -2,7 +2,7 @@ package com.example.rannver.mdmovie.presenter;
 
 import android.util.Log;
 
-import com.example.rannver.mdmovie.bean.listBean.HotListBean;
+import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
 import com.example.rannver.mdmovie.contract.HotContract;
 import com.example.rannver.mdmovie.model.HotModel;
 
@@ -18,7 +18,7 @@ public class HotPresenter implements HotContract.HotPresenter {
 
     private HotModel hotModel;
     private HotContract.HotView hotView;
-    private List<HotListBean> hotlist;
+    private List<MoiveListBean> hotlist;
 
     public HotPresenter(){
         hotModel= new HotModel(HotPresenter.this);
@@ -46,5 +46,10 @@ public class HotPresenter implements HotContract.HotPresenter {
     public void ModleOK() {
         hotlist = hotModel.GetHotList();
         SetListData();
+    }
+
+    @Override
+    public void ModleFalse() {
+        hotView.initText();
     }
 }

@@ -7,28 +7,26 @@ import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
 import java.util.List;
 
 /**
- * Created by Rannver on 2017/4/21.
+ * Created by Rannver on 2017/4/27.
  */
 
-public interface HotContract {
+public interface TopContract {
 
-    interface HotView extends BaseView<HotPresenter>{
+    interface TopView extends BaseView<TopPresenter> {
 
-        void initList();
-
-        void SetHotList(List<MoiveListBean> list);
+        void initList(List<MoiveListBean> list);
 
         void initText();
 
     }
 
-    interface HotPresenter extends BasePresenter{
-        void initView(HotView hotView);
+    interface TopPresenter extends BasePresenter {
+
+        void initView(TopView topView);
 
         void  ModleOK();
 
         void  ModleFalse();
     }
-
 
 }
