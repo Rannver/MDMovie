@@ -1,16 +1,17 @@
 package com.example.rannver.mdmovie.model;
 
-import android.util.Log;
-
-import com.example.rannver.mdmovie.bean.gsonBean.HotGsonBean;
+import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
 import com.example.rannver.mdmovie.contract.SearchContract;
+import com.example.rannver.mdmovie.retrofit.GetMovieService;
+import com.example.rannver.mdmovie.retrofit.MoiveCallback;
+import com.example.rannver.mdmovie.retrofit.MovieApi;
+import com.example.rannver.mdmovie.retrofit.RetrofitUtil;
 import com.example.rannver.mdmovie.webApi.SearchWebApi;
 import com.example.rannver.mdmovie.webServce.SearchServce;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +28,7 @@ public class SearchModel {
     private List<MoiveListBean> list;
 
 
-    private HotGsonBean gsonBean;
+    private MoiveListGsonBean gsonBean;
 
     public SearchModel(SearchContract.SearchPresenter presenter){
         this.presenter = presenter;
@@ -37,13 +38,14 @@ public class SearchModel {
         GetSearchInfo(q);
     }
 
+    //搜索结果显示（新retrofit）
     private void GetSearchInfo(String q) {
-        SearchWebApi webApi = new SearchWebApi();
-        SearchServce servce = webApi.getServce();
-        Call<HotGsonBean> call = servce.getState(q);
-        call.enqueue(new Callback<HotGsonBean>() {
+        GetMovieService getMoiveService = RetrofitUtil.retrofit(MovieApi.MOIVE_API).create(GetMovieService.class);
+        Call<MoiveListGsonBean> call = getMoiveService.getSearchResult(q);
+        call.enqueue(new MoiveCallback<MoiveListGsonBean>() {
             @Override
-            public void onResponse(Call<HotGsonBean> call, Response<HotGsonBean> response) {
+            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
+                super.onResponse(call, response);
                 if (response.body().getTotal()!=0){
                     gsonBean = response.body();
                     list = GetListData();
@@ -54,7 +56,32 @@ public class SearchModel {
             }
 
             @Override
-            public void onFailure(Call<HotGsonBean> call, Throwable t) {
+            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
+                super.onFailure(call, t);
+                presenter.ModleFalse();
+            }
+        });
+    }
+
+    //显示搜索结果（旧retrofit）
+    private void GetSearchInfo1(String q) {
+        SearchWebApi webApi = new SearchWebApi();
+        SearchServce servce = webApi.getServce();
+        Call<MoiveListGsonBean> call = servce.getState(q);
+        call.enqueue(new Callback<MoiveListGsonBean>() {
+            @Override
+            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
+                if (response.body().getTotal()!=0){
+                    gsonBean = response.body();
+                    list = GetListData();
+                    presenter.ModleOK();
+                }else {
+                    presenter.ModleNull();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 presenter.ModleFalse();
             }
         });
@@ -62,16 +89,16 @@ public class SearchModel {
 
     private List<MoiveListBean> GetListData() {
         List<MoiveListBean> list = new ArrayList<>();
-        List<HotGsonBean.SubjectsBean> subjects = gsonBean.getSubjects();
-        for (HotGsonBean.SubjectsBean subject: subjects) {
+        List<MoiveListGsonBean.SubjectsBean> subjects = gsonBean.getSubjects();
+        for (MoiveListGsonBean.SubjectsBean subject: subjects) {
             MoiveListBean top = new MoiveListBean();
             List<String> directions = new ArrayList<String>();
             List<String> casts = new ArrayList<String>();
 
-            for (HotGsonBean.SubjectsBean.DirectorsBean directior:subject.getDirectors()) {
+            for (MoiveListGsonBean.SubjectsBean.DirectorsBean directior:subject.getDirectors()) {
                 directions.add(directior.getName());
             }
-            for (HotGsonBean.SubjectsBean.CastsBean cast:subject.getCasts()){
+            for (MoiveListGsonBean.SubjectsBean.CastsBean cast:subject.getCasts()){
                 casts.add(cast.getName());
             }
 

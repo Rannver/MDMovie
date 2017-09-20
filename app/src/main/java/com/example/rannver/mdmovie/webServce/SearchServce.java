@@ -1,6 +1,6 @@
 package com.example.rannver.mdmovie.webServce;
 
-import com.example.rannver.mdmovie.bean.gsonBean.HotGsonBean;
+import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -13,6 +13,6 @@ import retrofit2.http.Query;
 public interface SearchServce {
 
     @GET("search")
-    Call<HotGsonBean> getState(@Query("q") String q);
+    Call<MoiveListGsonBean> getState(@Query("q") String q);
 
 }

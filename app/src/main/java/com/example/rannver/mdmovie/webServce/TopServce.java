@@ -1,7 +1,6 @@
 package com.example.rannver.mdmovie.webServce;
 
-import com.example.rannver.mdmovie.bean.gsonBean.HotGsonBean;
-import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
+import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -18,6 +17,6 @@ public interface TopServce {
 
 
     @GET("top250")
-    Call<HotGsonBean> getState(@Query("count") int count);
+    Call<MoiveListGsonBean> getState(@Query("count") int count);
 
 }

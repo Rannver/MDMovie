@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Rannver on 2017/4/21.
  */
 
-public class HotGsonBean {
+public class MoiveListGsonBean {
 
     /**
      * count : 20
