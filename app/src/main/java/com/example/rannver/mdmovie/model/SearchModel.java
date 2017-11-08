@@ -2,6 +2,8 @@ package com.example.rannver.mdmovie.model;
 
 import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
+import com.example.rannver.mdmovie.client.MoiveClient;
+import com.example.rannver.mdmovie.client.RxMoiveService;
 import com.example.rannver.mdmovie.contract.SearchContract;
 import com.example.rannver.mdmovie.retrofit.GetMovieService;
 import com.example.rannver.mdmovie.retrofit.MoiveCallback;
@@ -13,6 +15,9 @@ import com.example.rannver.mdmovie.webServce.SearchServce;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,6 +43,30 @@ public class SearchModel {
         GetSearchInfo(q);
     }
 
+    private void RxGetSearchInfo(String q){
+        RxMoiveService rxMoiveService = MoiveClient.getInstance().create(RxMoiveService.class,MovieApi.MOIVE_API);
+        rxMoiveService.getSearchResult(q)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MoiveListGsonBean>() {
+                    @Override
+                    public void accept(MoiveListGsonBean moiveListGsonBean) throws Exception {
+                        if (moiveListGsonBean.getTotal()!=0){
+                            gsonBean = moiveListGsonBean;
+                            list = GetListData();
+                            presenter.ModleOK();
+                        }else {
+                            presenter.ModleNull();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        presenter.ModleFalse();
+                    }
+                });
+    }
+
     //搜索结果显示（新retrofit）
     private void GetSearchInfo(String q) {
         GetMovieService getMoiveService = RetrofitUtil.retrofit(MovieApi.MOIVE_API).create(GetMovieService.class);
@@ -58,30 +87,6 @@ public class SearchModel {
             @Override
             public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 super.onFailure(call, t);
-                presenter.ModleFalse();
-            }
-        });
-    }
-
-    //显示搜索结果（旧retrofit）
-    private void GetSearchInfo1(String q) {
-        SearchWebApi webApi = new SearchWebApi();
-        SearchServce servce = webApi.getServce();
-        Call<MoiveListGsonBean> call = servce.getState(q);
-        call.enqueue(new Callback<MoiveListGsonBean>() {
-            @Override
-            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
-                if (response.body().getTotal()!=0){
-                    gsonBean = response.body();
-                    list = GetListData();
-                    presenter.ModleOK();
-                }else {
-                    presenter.ModleNull();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 presenter.ModleFalse();
             }
         });

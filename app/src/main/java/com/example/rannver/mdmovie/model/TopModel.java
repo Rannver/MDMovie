@@ -16,6 +16,7 @@ import com.example.rannver.mdmovie.webServce.TopServce;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
@@ -40,6 +41,23 @@ public class TopModel {
     }
 
     private void RxGetTopInfo(){
+        RxMoiveService rxMoiveService = MoiveClient.getInstance().create(RxMoiveService.class,MovieApi.MOIVE_API);
+        rxMoiveService.getTopList(RxMoiveService.TOP_FIFTY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MoiveListGsonBean>() {
+                    @Override
+                    public void accept(MoiveListGsonBean moiveListGsonBean) throws Exception {
+                        gsonBean = moiveListGsonBean;
+                        list = GetListData();
+                        presenter.ModleOK();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        presenter.ModleFalse();
+                    }
+                });
     }
 
     //获取TopList(新retrofit)
@@ -58,26 +76,6 @@ public class TopModel {
             @Override
             public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 super.onFailure(call, t);
-                presenter.ModleFalse();
-            }
-        });
-    }
-
-    //旧retrofit写法
-    private void GetTopInfo1() {
-        TopWebApi webApi = new TopWebApi();
-        TopServce servce = webApi.getServce();
-        Call<MoiveListGsonBean> call = servce.getState(TopServce.TOP_FIFTY);
-        call.enqueue(new Callback<MoiveListGsonBean>() {
-            @Override
-            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
-                gsonBean = response.body();
-                list = GetListData();
-                presenter.ModleOK();
-            }
-
-            @Override
-            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 presenter.ModleFalse();
             }
         });

@@ -40,7 +40,6 @@ public class FutureModel {
 
     public FutureModel(FutureContract.FuturePresenter presenter){
         this.presenter = presenter;
-//        GetFutureInfo();
         RxGetFutureInfo();
     }
 
@@ -96,26 +95,6 @@ public class FutureModel {
         });
     }
 
-    //获取即将上映的电影信息（使用旧写法）
-    private void GetFutureInfo1() {
-        FutureWebApi webApi = new FutureWebApi();
-        FutureServce servce = webApi.getServce();
-        Call<MoiveListGsonBean> call = servce.getState();
-        call.enqueue(new Callback<MoiveListGsonBean>() {
-            @Override
-            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
-                System.out.println("FutureModel:"+call.request().url().toString());
-                gsonBean = response.body();
-                list = GetListInfo();
-                presenter.ModleOK();
-            }
-
-            @Override
-            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
-                presenter.ModleFalse();
-            }
-        });
-    }
 
     private List<MoiveListBean> GetListInfo() {
         List<MoiveListBean> list = new ArrayList<MoiveListBean>();

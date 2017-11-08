@@ -3,6 +3,8 @@ package com.example.rannver.mdmovie.model;
 import com.example.rannver.mdmovie.bean.gsonBean.MoiveDetailGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.CastListBean;
 import com.example.rannver.mdmovie.bean.listBean.MoiveDetailBean;
+import com.example.rannver.mdmovie.client.MoiveClient;
+import com.example.rannver.mdmovie.client.RxMoiveService;
 import com.example.rannver.mdmovie.contract.MoiveDetailContract;
 import com.example.rannver.mdmovie.retrofit.GetMovieService;
 import com.example.rannver.mdmovie.retrofit.MoiveCallback;
@@ -14,6 +16,10 @@ import com.example.rannver.mdmovie.webServce.MoiveDetailServce;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,7 +41,27 @@ public class MoiveDetailModel {
     }
 
     public void SetMoiveId(int id){
-        GetMoiveInfo(id);
+        RxGetMoiveInfo(id);
+    }
+
+    private void RxGetMoiveInfo(int id){
+        RxMoiveService rxMoiveService = MoiveClient.getInstance().create(RxMoiveService.class,MovieApi.MOIVE_API);
+        rxMoiveService.getMovieInfo(id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MoiveDetailGsonBean>() {
+                    @Override
+                    public void accept(MoiveDetailGsonBean moiveDetailGsonBean) throws Exception {
+                        GetListInfo(moiveDetailGsonBean.getDirectors(),moiveDetailGsonBean.getCasts());
+                        detailBean = GetBeanInfo(moiveDetailGsonBean);
+                        presenter.ModleOK();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        presenter.ModleFalse();
+                    }
+                });
     }
 
     //获取电影详细信息（新retrofit）
@@ -54,27 +80,6 @@ public class MoiveDetailModel {
             @Override
             public void onFailure(Call<MoiveDetailGsonBean> call, Throwable t) {
                 super.onFailure(call, t);
-                presenter.ModleFalse();
-            }
-        });
-    }
-
-    //获取电影详细信息（旧retrofit）
-    private void GetMoiveInfo1(int id) {
-        System.out.println(TAG+":"+id);
-        MoiveDetailWebApi webApi = new MoiveDetailWebApi();
-        MoiveDetailServce servce = webApi.getServce();
-        Call<MoiveDetailGsonBean> call = servce.getState(id);
-        call.enqueue(new Callback<MoiveDetailGsonBean>() {
-            @Override
-            public void onResponse(Call<MoiveDetailGsonBean> call, Response<MoiveDetailGsonBean> response) {
-                GetListInfo(response.body().getDirectors(),response.body().getCasts());
-                detailBean = GetBeanInfo(response.body());
-                presenter.ModleOK();
-            }
-
-            @Override
-            public void onFailure(Call<MoiveDetailGsonBean> call, Throwable t) {
                 presenter.ModleFalse();
             }
         });

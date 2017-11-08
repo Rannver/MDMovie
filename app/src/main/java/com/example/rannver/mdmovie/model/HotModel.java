@@ -84,28 +84,6 @@ public class HotModel {
         });
     }
 
-    //获取全部信息(旧的)
-    private void GetHotInfo1(){
-        Log.d(TAG,"GetHotInfo");
-        HotWebApi hotWebApi = new HotWebApi();
-        HotWebServce webServce = hotWebApi.getServce();
-        Call<MoiveListGsonBean> call = webServce.getState("武汉");
-        call.enqueue(new Callback<MoiveListGsonBean>() {
-            @Override
-            public void onResponse(Call<MoiveListGsonBean> call, final Response<MoiveListGsonBean> response) {
-                hotGsonBean = response.body();
-                hotlist = GetHotData();
-                hotPresenter.ModleOK();
-                System.out.println(TAG+":"+response.body().getTitle());
-            }
-
-            @Override
-            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
-                Log.d(TAG,"请求信息失败");
-            }
-        });
-    }
-
     private void LogTAG(){
         if (hotlist==null){
             Log.d(TAG,"hotlist is null");
