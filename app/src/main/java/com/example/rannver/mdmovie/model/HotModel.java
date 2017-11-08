@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
+import com.example.rannver.mdmovie.client.MoiveClient;
+import com.example.rannver.mdmovie.client.RxMoiveService;
 import com.example.rannver.mdmovie.contract.HotContract;
 import com.example.rannver.mdmovie.retrofit.GetMovieService;
 import com.example.rannver.mdmovie.retrofit.MoiveCallback;
@@ -15,6 +17,9 @@ import com.example.rannver.mdmovie.webServce.HotWebServce;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,12 +38,35 @@ public class HotModel {
 
     public HotModel(HotContract.HotPresenter hotPresenter){
         this.hotPresenter = hotPresenter;
-        GetHotInfo();
+        RxGetHotInfo();
+    }
+
+    //Rxjava+Retrofit
+    private void RxGetHotInfo(){
+        RxMoiveService rxMoiveService = MoiveClient.getInstance().create(RxMoiveService.class,MovieApi.MOIVE_API);
+        rxMoiveService.getHotList("武汉")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MoiveListGsonBean>() {
+                    @Override
+                    public void accept(MoiveListGsonBean moiveListGsonBean) throws Exception {
+                        hotGsonBean = moiveListGsonBean;
+                        hotlist = GetHotData();
+                        hotPresenter.ModleOK();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d(TAG, "throwable: "+throwable.toString());
+                    }
+                });
     }
 
     //获取全部当下热门信息(使用新的retrofit写法)
     private void GetHotInfo(){
-        GetMovieService getMovieService = RetrofitUtil.retrofit(MovieApi.MOIVE_API).create(GetMovieService.class);
+        GetMovieService getMovieService =
+                RetrofitUtil.retrofit(MovieApi.MOIVE_API)
+                .create(GetMovieService.class);
         Call<MoiveListGsonBean> call = getMovieService.getHotList("武汉");
         call.enqueue(new MoiveCallback<MoiveListGsonBean>() {
             @Override

@@ -2,13 +2,22 @@ package com.example.rannver.mdmovie.model;
 
 import com.example.rannver.mdmovie.bean.gsonBean.MoiveListGsonBean;
 import com.example.rannver.mdmovie.bean.listBean.MoiveListBean;
+import com.example.rannver.mdmovie.client.MoiveClient;
+import com.example.rannver.mdmovie.client.RxMoiveService;
 import com.example.rannver.mdmovie.contract.TopContract;
+import com.example.rannver.mdmovie.retrofit.GetMovieService;
+import com.example.rannver.mdmovie.retrofit.MoiveCallback;
+import com.example.rannver.mdmovie.retrofit.MovieApi;
+import com.example.rannver.mdmovie.retrofit.RetrofitUtil;
+import com.example.rannver.mdmovie.webApi.MoiveDetailWebApi;
 import com.example.rannver.mdmovie.webApi.TopWebApi;
 import com.example.rannver.mdmovie.webServce.TopServce;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,7 +39,32 @@ public class TopModel {
         GetTopInfo();
     }
 
+    private void RxGetTopInfo(){
+    }
+
+    //获取TopList(新retrofit)
     private void GetTopInfo() {
+        GetMovieService getMoiveService = RetrofitUtil.retrofit(MovieApi.MOIVE_API).create(GetMovieService.class);
+        Call<MoiveListGsonBean> call = getMoiveService.getTopList(GetMovieService.TOP_MAX);
+        call.enqueue(new MoiveCallback<MoiveListGsonBean>() {
+            @Override
+            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
+                super.onResponse(call, response);
+                gsonBean = response.body();
+                list = GetListData();
+                presenter.ModleOK();
+            }
+
+            @Override
+            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
+                super.onFailure(call, t);
+                presenter.ModleFalse();
+            }
+        });
+    }
+
+    //旧retrofit写法
+    private void GetTopInfo1() {
         TopWebApi webApi = new TopWebApi();
         TopServce servce = webApi.getServce();
         Call<MoiveListGsonBean> call = servce.getState(TopServce.TOP_FIFTY);
