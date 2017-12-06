@@ -44,6 +44,7 @@ public class HotModel {
     //Rxjava+Retrofit
     private void RxGetHotInfo(){
         RxMoiveService rxMoiveService = MoiveClient.getInstance().create(RxMoiveService.class,MovieApi.MOIVE_API);
+
         rxMoiveService.getHotList("武汉")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -91,6 +91,27 @@ public class FutureModel {
             @Override
             public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
                 super.onFailure(call, t);
+                presenter.ModleFalse();
+            }
+        });
+    }
+
+    //旧retrifot写法
+    private void GetFutureInfo2(){
+        FutureWebApi webApi = new FutureWebApi();
+        FutureServce servce = webApi.getServce();
+        Call<MoiveListGsonBean> call = servce.getState();
+        call.enqueue(new Callback<MoiveListGsonBean>() {
+            @Override
+            public void onResponse(Call<MoiveListGsonBean> call, Response<MoiveListGsonBean> response) {
+                gsonBean = response.body();
+                list = GetListInfo();
+                presenter.ModleOK();
+            }
+
+            @Override
+            public void onFailure(Call<MoiveListGsonBean> call, Throwable t) {
+                presenter.ModleFalse();
             }
         });
     }

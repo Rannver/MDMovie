@@ -72,6 +72,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
+
     }
 
     @Override
